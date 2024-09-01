@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Nama : Maulida Aprillia Cinta Ariyatin
+    NIM : 24060122120029
+    LAB : A1-PBP -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS Validation</title>
+    <style>
+        .container{
+            border: 1px solid #9fa8dd;
+            padding: 20px;
+            max-width: 500px;
+            border-radius: 10px;
+            background-color: #f5f1e8;
+            margin: 50px auto;
+        }
+        h2 {
+            text-align: center;
+        }
+        label {
+            width: 120px;
+        }
+        .f-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        textarea {
+            height: 60px;
+        }
+        
+        input[type="text"]#captcha,#finputCaptcha{
+            width: 100px;
+            margin-left: 5px;
+            text-align: center;
+        }
+        input[type="submit"],[type="reset"] {
+            padding: 5px 10px;
+            margin-right: 10px;
+            border-color: rgb(199, 199, 199);
+            cursor: pointer;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Form Tambah Data Produk</h2>
+        <form name="formInput" action="process.php" onsubmit="return validateForm()" method="post">
+            <div class="f-group">
+                <label for="fnamaproduk">Nama Produk</label><br />
+                <!-- <span id="errNamaproduk"></span><br> -->
+                <input type="text" name="fnamaproduk" id="fnamaproduk"/> <br />
+            </div>
+
+            <div class="f-group">
+                <label for="fdeskripsi">Deskripsi</label><br />
+                <textarea name="fdeskripsi" id="fdeskripsi"></textarea><br>
+            </div>
+
+            <div class="f-group">
+                <label for="fkategori">Kategori</label><br>
+                <select name="fkategori" id="fkategori" onchange="updateSubCategory()">
+                    <option value="">--Pilih Kategori--</option>
+                    <option value="Baju">Baju</option>
+                    <option value="Elektronik">Elektronik</option>
+                    <option value="Alat Tulis">Alat Tulis</option>
+                </select><br>
+            </div>
+            
+
+            <div class="f-group">
+                <label for="fsubkategori">Sub Kategori</label><br>
+                <select name="fsubkategori" id="fsubkategori">
+                    <option value="">--Pilih Sub Kategori--</option>
+                </select><br>
+            </div>
+
+            <div class="f-group">
+                <label for="fhargasatuan">Harga Satuan</label><br>
+                <input type="text" name="fhargasatuan" id="fhargasatuan"><br>
+            </div>
+
+            <div class="f-group">
+                <label>Grosir</label><br>
+                <input type="radio" name="fgrosir" id="grosirYA" value="Ya" onclick="klikGrosir(true)">Ya
+                <input type="radio" name="fgrosir" id="grosirNO" value="Tidak" onclick="klikGrosir(false)">Tidak <br>
+            </div>
+
+            <div class="f-group">
+                <label for="fhargagrosir">Harga Grosir</label><br>
+                <input type="text" name="fhargagrosir" id="fhargagrosir" disabled oninput="validateNumericInput(this)"><br>
+            </div>
+
+            <div class="f-group">
+                <label>Jasa Kirim</label><br>
+                <div class="vertikal">
+                    <input type="checkbox" name="fjasakirim" id="jne">JNE <br>
+                    <input type="checkbox" name="fjasakirim" id="tiki">TIKI <br>
+                    <input type="checkbox" name="fjasakirim" id="siCepat">SiCepat <br>
+                    <input type="checkbox" name="fjasakirim" id="ninja">Ninja Express <br>
+                    <input type="checkbox" name="fjasakirim" id="wahana">Wahana <br>
+                </div>
+                
+            </div>
+            
+
+            <div class="f-group">
+                <label for="captcha">Captcha</label><br>
+                <div class="cinput-group">
+                    <input type="text" name="finputCaptcha" id="finputCaptcha">
+                    <input type="text" name="captcha" id="captcha" readonly><br>
+                </div>
+                
+            </div>
+
+            <div class="f-group">
+                <input type="submit">
+                <input type="reset" onclick="generateCaptcha()">
+            </div>
+            
+        </form>
+    </div>
+    
+    <script>
+        function validateForm(){
+            const fnamaproduk = document.getElementById("fnamaproduk").value.trim();
+            const fdeskripsi = document.getElementById("fdeskripsi").value.trim();
+            const fkategori = document.getElementById("fkategori").value;
+            const fsubkategori = document.getElementById("fsubkategori").value;
+            const fhargasatuan = document.getElementById("fhargasatuan").value.trim();
+            const grosirYA = document.getElementById("grosirYA").checked;
+            const fhargagrosir = document.getElementById("fhargagrosir").value.trim();
+            const pilihanJasaKirim = document.querySelectorAll("input[name='fjasakirim']:checked");
+            const finputCaptcha = document.getElementById("finputCaptcha").value.trim();
+            const captcha = document.getElementById("captcha").value.trim();
+
+            if(fnamaproduk.length<5 || fnamaproduk.length>30){
+                alert("Nama produk harus diisi minimal 5 karakter, maksimal 30 karakter");
+                return false;
+            }
+            if (fdeskripsi.length < 5 || fdeskripsi.length > 100) {
+                alert("Deskripsi harus diisi, minimal 5 karakter, maksimal 100 karakter");
+                return false;
+            }
+            if(!fkategori){
+                alert("Kategori harus diisi");
+                return false;
+            }
+            if(!fsubkategori){
+                alert("Sub Kategori harus diisi");
+                return false;
+            }
+            if(!fhargasatuan || isNaN(fhargasatuan)){
+                alert("Harga satuan harus diisi dengan nilai numerik");
+                return false;
+            }
+            if(grosirYA && (!fhargagrosir || isNaN(fhargagrosir))){
+                alert("Harga grosir harus diisi jika grosir dipilih Ya dan bernilai numerik");
+                return false;
+            }
+            if(pilihanJasaKirim.length<3){
+                alert("Minimal jasa kirim yang harus dipilih ada 3");
+                return false;
+            }
+            if(finputCaptcha !==captcha){
+                alert("Captcha salah");
+                return false;
+            }
+            return true;
+        }
+
+        function validateNumericInput(input) {
+            // Menghapus semua karakter kecuali angka
+            input.value = input.value.replace(/[^0-9]/g, '');
+        }
+
+        function updateSubCategory() {
+            const fkategori = document.getElementById("fkategori").value;
+            const fsubkategori = document.getElementById("fsubkategori");
+            
+            fsubkategori.innerHTML = "";             
+            if (fkategori === 'Baju') {
+                fsubkategori.innerHTML += '<option value="">--Pilih Sub Kategori--</option>';
+                fsubkategori.innerHTML += '<option value="Baju Pria">Baju Pria</option>';
+                fsubkategori.innerHTML += '<option value="Baju Wanita">Baju Wanita</option>';
+                fsubkategori.innerHTML += '<option value="Baju Anak">Baju Anak</option>';
+            } else if (fkategori === 'Elektronik') {
+                fsubkategori.innerHTML += '<option value="">--Pilih Sub Kategori--</option>';
+                fsubkategori.innerHTML += '<option value="Mesin Cuci">Mesin Cuci</option>';
+                fsubkategori.innerHTML += '<option value="Kulkas">Kulkas</option>';
+                fsubkategori.innerHTML += '<option value="AC">AC</option>';
+            } else if (fkategori === 'Alat Tulis') {
+                fsubkategori.innerHTML += '<option value="">--Pilih Sub Kategori--</option>';
+                fsubkategori.innerHTML += '<option value="Kertas">Kertas</option>';
+                fsubkategori.innerHTML += '<option value="Map">Map</option>';
+                fsubkategori.innerHTML += '<option value="Pulpen">Pulpen</option>';
+            }
+        }
+
+        function klikGrosir(isWholesale) {
+            document.getElementById("fhargagrosir").disabled = !isWholesale;
+        }
+
+        function generateCaptcha() {
+            const captchaLength = 5;
+            let captcha = '';
+
+            for (let i = 0; i < captchaLength; i++) {
+                const isUpperCase = Math.random() < 0.5;
+                const charCode = isUpperCase 
+                    ? Math.floor(Math.random() * 26) + 65  // A-Z
+                    : Math.floor(Math.random() * 26) + 97; // a-z
+                captcha += String.fromCharCode(charCode);
+            }
+
+            document.getElementById('captcha').value = captcha;
+        }
+        window.onload = generateCaptcha;
+    </script>
+</body>
+</html>
