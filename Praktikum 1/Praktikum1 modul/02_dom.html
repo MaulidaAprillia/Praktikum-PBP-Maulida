@@ -1,0 +1,21 @@
+// Nama : Maulida Aprillia Cinta Ariyatin
+// NIM  : 240060122120029
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Javacsript</title>
+</head>
+<body>
+    <h2>Akses elemen menggunakan getElementByTagName</h2>
+    <p>Belajar Javacsript</p>
+    <p>Belajar Document Object Model</p>
+    <p id="demo"></p>
+
+    <script>
+        var x = document.getElementsByTagName("p");
+        document.getElementById("demo").innerHTML = "isi text[0] : "+ x[0].innerHTML + "<br />"+ "isi text[1] : "+ x[1].innerHTML;
+    </script>
+</body>
+</html>
